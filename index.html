@@ -1,0 +1,105 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Api Autenticacao</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body>
+    <h1>Api Autenticação</h1>
+
+    <div>
+      <h4>Operações</h4>
+      <input
+        type="button"
+        value="BuscarClientesPOST"
+        onclick="BuscarClientesPOST()"
+      />
+    </div>
+
+    <div>
+      <textarea
+        type="text"
+        id="retornoChamadas"
+        rows="25"
+        cols="100"
+      ></textarea>
+    </div>
+	
+	<input
+        type="button"
+        value="Autenticar"
+        onclick="Autenticar()"
+	/>
+	
+	<input
+        type="button"
+        value="AutenticarHeader"
+        onclick="AutenticarHeader()"
+	/>
+
+    <script>
+      function BuscarClientesPOST() {
+		$.ajax({
+        url: "https://ucsweb1.azurewebsites.net/API/BuscarClientesPOST", 
+        method: "POST",
+        headers: {
+            "api_key": "ed4a8ae4-d7d7-4427-b925-e2408287a270"
+        },
+        success: function (response) {
+            document.getElementById("retornoChamadas").value = JSON.stringify(response);
+        },
+		});
+		}
+
+	  function Autenticar() {
+		$.ajax({
+        url: "https://ucsweb1.azurewebsites.net/API/Autenticar", 
+        method: "POST",
+        data: {
+            "chaveAPI": "8175f301022f475daa5e6098c532a2aa"
+        },
+        success: function(response) {
+            if (response.token) {
+                localStorage.setItem("auth_token", response.token);
+               console.log("Autenticação realizada, token recebido:", response.token);
+            } else {
+                console.log("Resposta da autenticação:", response);
+            }
+		}
+		});
+	}
+
+	  
+	  function AutenticarHeader(){
+		$.ajax({
+        url: "https://ucsweb1.azurewebsites.net/API/AutenticarHeader", 
+        method: "POST",
+        headers: {
+            "api_key": "8175f301022f475daa5e6098c532a2aa"
+        },
+        success: function (response) {
+            if (response.token) {
+                localStorage.setItem("auth_token_header", response.token);
+                console.log("Autenticação realizada, token recebido:", response.token);
+            } else {
+                console.log("Resposta da autenticação:", response);
+            }
+        },
+		});
+		}
+		
+		function BuscarClientesAutenticado(){}
+		function BuscarClientesAutenticadoHeader(){}
+		function CadastrarCliente() {}
+	
+    </script>
+	<footer>Trabalho realizado por leonel e Matheus</footer>
+  <script src="https://ucsvirtual.ucs.br/globalAva/midia/js/api.js?v=3" defer></script>
+<script async src="https://plugin.handtalk.me/web/latest/handtalk.min.js"></script>
+<script>
+window.onload = function () {
+window.ht = new HT({token: "fcd73057422dbc01ea47e8d3fce53c4d",avatar: "MAYA", align: "bottom"});}
+</script>
+</body>
+</html>
+
