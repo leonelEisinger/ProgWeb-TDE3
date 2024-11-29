@@ -1,0 +1,22 @@
+.album-image {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.album-image:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .album-col {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .album-col {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
