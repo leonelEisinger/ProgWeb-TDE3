@@ -8,22 +8,25 @@
   <title>UCS Discos</title>
 </head>
 <body>
-  <div class="container py-4">
-    <header class="text-center mb-4">
-      <h1>API UCS Discos</h1>
-      <button id="btn-autenticar" class="btn btn-primary mt-3">Autenticar</button>
-    </header>
-
-    <!-- Indicador de carregamento -->
-    <div id="loading" class="text-center my-5 d-none">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
+  <div class="container">
+    <div class="row" id="discos-container"></div>
+    <div id="loading" class="text-center my-3" style="display: none;">
+      <div class="spinner-border" role="status"></div>
     </div>
+  </div>
 
-    <!-- Grid de álbuns -->
-    <div id="album-grid" class="row g-3">
-      <!-- Discos serão adicionados aqui dinamicamente -->
+  <!-- Modal -->
+  <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="detailsModalLabel">Detalhes do Disco</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modal-body">
+          <!-- Conteúdo será inserido via JS -->
+        </div>
+      </div>
     </div>
   </div>
 
