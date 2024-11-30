@@ -1,101 +1,92 @@
-// script.js
-const API_KEY = "8175fA5f6098c5301022f475da32a2aa";
-const BASE_URL = "https://ucsdiscosapi.azurewebsites.net";
-let token = null;
-let offset = 0; // Para controle da rolagem infinita
-const LIMIT = 12; // Quantidade de registros por requisição
-
-document.addEventListener("DOMContentLoaded", async () => {
-  token = await autenticar();
-  if (token) {
-    carregarDiscos();
-    window.addEventListener("scroll", verificarScroll);
-  }
-});
-
-// Função para autenticar
-async function autenticar() {
-  try {
-    exibirLoading(true);
-    const response = await fetch(`https://ucsdiscosapi.azurewebsites.net/swagger/index.html/discos/autenticar`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ apiKey: "8175fA5f6098c5301022f475da32a2aa" }),
-    });
-    const data = await response.json();
-    exibirLoading(false);
-    return data.token;
-  } catch (error) {
-    exibirLoading(false);
-    alert("Erro ao autenticar!");
-    console.error(error);
-  }
-}
-
-// Função para carregar discos
-async function carregarDiscos() {
-  try {
-    exibirLoading(true);
-    const response = await fetch(`${BASE_URL}/discos/records?offset=${offset}&limit=${LIMIT}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const discos = await response.json();
-    renderizarDiscos(discos);
-    offset = (offset + LIMIT) % 105; // Atualiza offset e reinicia ao chegar em 105
-    exibirLoading(false);
-  } catch (error) {
-    exibirLoading(false);
-    alert("Erro ao carregar discos!");
-    console.error(error);
-  }
-}
-
-// Função para renderizar os discos
-function renderizarDiscos(discos) {
-  const container = document.getElementById("discos-container");
-  discos.forEach((disco) => {
-    const col = document.createElement("div");
-    col.className = "col-12 col-md-6";
-    col.innerHTML = `
-      <img src="${disco.capaUrl}" alt="${disco.titulo}" data-id="${disco.id}">
-    `;
-    col.querySelector("img").addEventListener("click", () => abrirModal(disco.id));
-    container.appendChild(col);
+// Função para autenticar o usuário e armazenar o token
+function autenticar(callback) {
+  $.ajax({
+    url: "https://ucsdiscosapi.azurewebsites.net/Discos/autenticar",
+    method: "POST",
+    headers: {
+      "ChaveAPI": "8175fA5f6098c5301022f475da32a2aa",
+    },
+    success: function (response) {
+      console.log("Resposta da autenticação:", response);
+      if (response.token) {
+        try {
+          localStorage.setItem("auth_token", response.token);
+          console.log("Token armazenado com sucesso:", response.token);
+          if (callback) callback(response.token);
+        } catch (e) {
+          console.error("Erro ao salvar token no localStorage:", e);
+        }
+      } else {
+        console.error("Token não recebido. Verifique a resposta.");
+      }
+    },
+    error: function (erro) {
+      console.error("Erro na autenticação:", erro);
+    },
   });
 }
 
-// Função para abrir o modal com detalhes
-async function abrirModal(id) {
-  try {
-    exibirLoading(true);
-    const response = await fetch(`${BASE_URL}/discos/record?id=${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const disco = await response.json();
-    document.getElementById("modal-body").innerHTML = `
-      <p><strong>Título:</strong> ${disco.titulo}</p>
-      <p><strong>Artista:</strong> ${disco.artista}</p>
-      <p><strong>Gênero:</strong> ${disco.genero}</p>
-      <p><strong>Ano:</strong> ${disco.ano}</p>
-      <img src="${disco.capaUrl}" alt="${disco.titulo}" class="img-fluid">
+// // Função para carregar discos e exibir no HTML
+function carregarDiscos(token, numeroInicio, quantidade) {
+  $.ajax({
+    url: "https://ucsdiscosapi.azurewebsites.net//Discos/records",
+    method: "GET",
+    headers: {
+      "TokenApiUCS": token, // Passa o token no cabeçalho
+    },
+    data: {
+      numeroInicio: numeroInicio, // Índice inicial
+      quantidade: quantidade,     // Quantidade de itens
+    },
+    success: function (response) {
+      console.log("Discos recebidos:", response);
+      exibirDiscos(response); // Exibe os discos no HTML
+    },
+    error: function (erro) {
+      console.error("Erro ao carregar discos:", erro);
+    },
+  });
+}
+
+// Função para exibir os discos no container
+function exibirDiscos(discos) {
+  const container = $("#discos-container"); // Contêiner onde os discos serão exibidos
+  discos.forEach(disco => {
+    const discoElement = `
+      <div class="disco">
+        <img src="${disco.imagemUrl}" alt="${disco.nome}" class="disco-img" />
+        <p>${disco.nome}</p>
+      </div>
     `;
-    new bootstrap.Modal(document.getElementById("detailsModal")).show();
-    exibirLoading(false);
-  } catch (error) {
-    exibirLoading(false);
-    alert("Erro ao carregar detalhes!");
-    console.error(error);
-  }
+    container.append(discoElement);
+  });
 }
 
-// Verifica se o usuário chegou ao final da página
-function verificarScroll() {
-  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 10) {
-    carregarDiscos();
-  }
-}
+// Função inicial para configurar o carregamento
+$(document).ready(function () {
+  const token = localStorage.getItem("auth_token");
+  let numeroInicio = 1; // Índice inicial dos discos
 
-// Exibe ou oculta o loading
-function exibirLoading(ativo) {
-  document.getElementById("loading").style.display = ativo ? "block" : "none";
-}
+  if (token) {
+    console.log("Token encontrado no localStorage:", token);
+    carregarDiscos(token, numeroInicio, 12);
+
+    // Incrementa o índice ao carregar mais discos
+    $("#carregar-mais").click(function () {
+      numeroInicio += 12;
+      carregarDiscos(token, numeroInicio, 12);
+    });
+  } else {
+    console.log("Token não encontrado. Iniciando autenticação...");
+    autenticar((novoToken) => {
+      console.log("Novo token obtido:", novoToken);
+      carregarDiscos(novoToken, numeroInicio, 12);
+
+      // Incrementa o índice ao carregar mais discos
+      $("#carregar-mais").click(function () {
+        numeroInicio += 12;
+        carregarDiscos(novoToken, numeroInicio, 12);
+      });
+    });
+  }
+});

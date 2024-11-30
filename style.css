@@ -2,11 +2,19 @@ body {
   background-color: #f8f9fa;
 }
 
-#discos-container img {
-  max-width: 100%;
-  cursor: pointer;
+.discos-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 20px;
 }
-
-#discos-container .col {
-  margin-bottom: 15px;
+.disco {
+  text-align: center;
+  width: 150px;
+}
+.disco-img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
 }
