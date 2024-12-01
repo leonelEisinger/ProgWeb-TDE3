@@ -2,19 +2,108 @@ body {
   background-color: #f8f9fa;
 }
 
-.discos-container {
+#discosContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 20px;
+  gap: 15px;
+  justify-content: center;
 }
-.disco {
-  text-align: center;
-  width: 150px;
+
+.disco img {
+  width: 500px; /* Ajusta para o tamanho do contêiner */
+  height: 500px; /* Defina uma altura fixa para as imagens */
+  object-fit: cover; /* Assegura que a imagem cubra o contêiner sem distorcer */
+  border-radius: 10px;
+  transition: transform 0.2s;
 }
-.disco-img {
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 8px;
+
+.disco img:hover {
+  transform: scale(1.1);
+  cursor: pointer;
 }
+
+/* Carregamento */
+.loading {
+  position: fixed; /* Coloca o carregamento sobre a tela */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: bounce 2s infinite ease-in-out;
+  z-index: 9999;
+}
+
+/* Bolinha esquerda */
+.loading::before, .loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  animation: expandShrink 1s infinite alternate, colorChange 4s infinite linear;
+}
+
+/* Bolinha esquerda */
+.loading::before {
+  left: 0;
+  animation-delay: 0s;
+}
+
+/* Bolinha direita */
+.loading::after {
+  right: 0;
+  animation-delay: 0.5s;
+}
+
+/* Animação de expansão e contração */
+@keyframes expandShrink {
+  0% {
+      transform: scale(1);
+  }
+  100% {
+      transform: scale(1.5);
+  }
+}
+
+/* Animação de "bouncing" para simular a abertura */
+@keyframes bounce {
+  0% {
+      top: 50%;
+  }
+  50% {
+      top: 45%;
+  }
+  100% {
+      top: 50%;
+  }
+}
+
+/* Animação para alternar entre cores */
+@keyframes colorChange {
+  0% {
+      background-color: #aaa; /* Common */
+  }
+  25% {
+      background-color: #4287f5; /* Rare */
+  }
+  50% {
+      background-color: #8e44ad; /* Mythical */
+  }
+  75% {
+      background-color: #f1c40f; /* Legendary */
+  }
+  100% {
+      background-color: #aaa; /* Common */
+  }
+}
+
+
+
+
+
+
